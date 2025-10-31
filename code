@@ -1,0 +1,41 @@
+# Download DVWA
+
+cd /var/www/html      # Download the DVWA project from GitHub into this directory
+sudo git clone https://github.com/digininja/DVWA.git # Download the DVWA project from GitHub into this directory 
+ls       # List files in the current directory to confirm DVWA was moved successfully
+sudo chmod -R 777 DVWA      # Give full permissions to the DVWA folder
+ls -l         # Verify permission changes and files again
+cd DVWA       # Enter the DVWA project folder
+cd config     # Enter the configuration folder for DVWA
+cp config.inc.php.dist  config.inc.php    # Create the main DVWA config file from the sample template
+sudo nano config.inc.php                  # Open the config file for editing in Nano, change db username and password to admin and password
+sudo systemctl start mysql                # Start the MySQL database service
+sudo systemctl status mysql               # Check if MySQL is running and active
+sudo su                                   # Switch to the root user (administrator mode)
+mysql -u root -p                          # Log in to MySQL as the root user
+   
+# Log in into MySQL
+ Create Database For the DVWA
+#inside mariadb write 
+create user 'admin'@'127.0.0.1' identified by 'password';  -- Create a MySQL user "admin" 
+grant all privileges on dvwa.* to 'admin'@'127.0.0.1';  -- Give the admin user full access to the dvwa database 
+flush privileges; -- Apply changes to MySQL users and permissions
+ exit
+
+systemctl start apache2    # Start the Apache web server service
+systemctl status apache2   # Check if Apache is running and active
+cd /etc/php                # Go to the PHP configuration directory
+ls                         # List available PHP versions installed on the system
+cd 8.4                     # Enter the folder for PHP version 8.4 (choose the latest version you saw)
+ls                         # List PHP configuration types for this version
+cd apache2                 # Enter the PHP settings used specifically by Apache
+ls                         # View the configuration files in this directory
+sudo nano php.ini          # Open the php.ini file to edit PHP settings
+#use ctrl f  search for fopen
+#allow_url_fopen = On (make sure it’s on)
+#allow_url_include = On (make sure it’s on)
+#save the file with ctrl o
+systemctl restart apache2 # Restart Apache to apply configuration changes
+#Go to browser write URL 127.0.0.1/DVWA
+#Login as admin and password
+#Then create database
