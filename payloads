@@ -1,1 +1,21 @@
 # here is the payload files we gave to the burpsuit
+we used two files for each payload one for the username field and the other for the password field
+here is the contants of seed_usernames.txt:
+testuser
+admin2
+alice
+bob
+guest
+admin
+
+here is the contants of the seed_passwords.txt:
+Passw0rd
+password2
+123456
+Welcome1
+Test123!
+password
+
+
+
+
