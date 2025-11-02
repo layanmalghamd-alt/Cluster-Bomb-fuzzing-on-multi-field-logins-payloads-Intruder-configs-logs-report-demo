@@ -39,3 +39,56 @@ systemctl restart apache2 # Restart Apache to apply configuration changes
 #Go to browser write URL 127.0.0.1/DVWA
 #Login as admin and password
 #Then create database
+
+here is the code for the instlation and configuration of the modSecurity (WAF):
+
+
+here is the custome rule file that i made for the modsecurity to block the attack:
+File path: /etc/modsecurity/conf.d/zz_dvwa_bruteforce.conf
+
+# zz_dvwa_bruteforce.conf - DVWA brute-force mitigation
+SecAction "id:99000001,phase:1,pass,nolog,initcol:ip=%{REMOTE_ADDR}"
+
+SecRule REQUEST_URI "@rx (?i)/DVWA/vulnerabilities/brute/?(\?.*)?$" \
+  "phase:4,pass,id:99000010,log,chain,msg:'DVWA brute response checked'"
+  SecRule RESPONSE_BODY "(?i:(login failed|incorrect|invalid|wrong password|username and/or password))" \
+    "setvar:ip.dvwa_failures=+1,expirevar:ip.dvwa_failures=60"
+
+SecRule IP:dvwa_failures "@gt 3" \
+  "phase:1,deny,status:429,id:99000020,log,msg:'DVWA brute force - blocking IP %{REMOTE_ADDR} (fails=%{ip.dvwa_failures})'"
+
+SecRule IP:dvwa_failures "@gt 3" \
+  "phase:1,pass,id:99000021,log,append:'X-Blocked-By: ModSecurity DVWA'"
+
+here are some important configuration i added for the modsecurity:
+/etc/modsecurity/modsecurity.conf
+SecRuleEngine DetectionOnly   # for test time it will be detection only now ; then set to On for blocking AFTER
+SecRequestBodyAccess On
+SecResponseBodyAccess On
+SecResponseBodyLimit 524288
+SecRequestBodyLimit 131072
+SecAuditEngine RelevantOnly
+SecAuditLog /var/log/apache2/modsec_audit.log
+
+Set ModSecurity to detection only:
+sudo sed -i 's/^SecRuleEngine.*/SecRuleEngine DetectionOnly/' /etc/modsecurity/modsecurity.conf
+sudo systemctl restart apache2
+
+Open these three terminals to capture evidence:
+# Terminal A: Apache access log
+sudo tail -f /var/log/apache2/access.log
+
+# Terminal B: ModSecurity audit log
+sudo tail -f /var/log/apache2/modsec_audit.log
+
+# Terminal C: Apache error log
+sudo tail -f /var/log/apache2/error.log
+
+now in Burp, run your brute-force attack :
+http://127.0.0.1/DVWA/vulnerabilities/brute/
+
+now for the seconed part try with modsecurity enabled:
+Enable blocking:
+sudo sed -i 's/^SecRuleEngine.*/SecRuleEngine On/' /etc/modsecurity/modsecurity.conf
+sudo systemctl restart apache2
+
