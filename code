@@ -40,6 +40,9 @@ systemctl restart apache2 # Restart Apache to apply configuration changes
 #Login as admin and password
 #Then create database
 
+
+##mitigation 
+
 here is the code for the instlation and configuration of the modSecurity (WAF):
 
 
