@@ -1,5 +1,5 @@
 # Burp Intruder Cluster-Bomb Capstone Project
-access_log_before.png
+
 ## Who We Are
 This repository belongs to our cybersecurity capstone group.  
 We are a team of students performing a security analysis using **Burp Suite Intruder** on a test web application (DVWA).
