@@ -3,7 +3,6 @@
 ## Who We Are
 This repository belongs to our cybersecurity capstone group.  
 We are a team of students performing a security analysis using **Burp Suite Intruder** on a test web application (DVWA).
-![Access Log Screenshot](access_log_before.png)
 
 ## Project Summary (6 Weeks)
 Over six weeks, we worked on understanding and testing how Burp Intruder’s **Cluster Bomb** attack can be used to fuzz multiple correlated login fields (e.g., username + token).  
